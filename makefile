@@ -12,17 +12,16 @@ SOURCES_SVC.c =
 SOURCES_SVC.h = 
 SOURCES.x = phone_book.x
 
-TARGETS_SVC.c = phone_book_svc.c server_util.c phone_book_server.c phone_book_xdr.c 
+TARGETS_SVC.c = phone_book_svc.c phone_book_server.c phone_book_xdr.c 
 TARGETS_CLNT.c = phone_book_clnt.c client_util.c phone_book_client.c phone_book_xdr.c 
-TARGETS = phone_book.h phone_book_xdr.c client_util.c server_util.c phone_book_clnt.c phone_book_svc.c phone_book_client.c phone_book_server.c
+TARGETS = phone_book.h phone_book_xdr.c client_util.c phone_book_clnt.c phone_book_svc.c phone_book_client.c phone_book_server.c
 
 OBJECTS_CLNT = $(SOURCES_CLNT.c:%.c=%.o) $(TARGETS_CLNT.c:%.c=%.o)
 OBJECTS_SVC = $(SOURCES_SVC.c:%.c=%.o) $(TARGETS_SVC.c:%.c=%.o)
 # Compiler flags 
 
-CFLAGS += -g 
-LDLIBS += -lnsl
-RPCGENFLAGS = 
+CFLAGS += -g -DRPC_SVC_FG
+RPCGENFLAGS = -C
 
 # Targets 
 

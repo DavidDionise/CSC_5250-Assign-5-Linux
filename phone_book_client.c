@@ -61,10 +61,22 @@ phone_book_prog_1(char *host, char *command)
 			printf("return val : %i, %s", result_1->num, result_1->message);
 		}
 	}
-	// result_2 = remove_from_database_1(&remove_from_database_1_arg, clnt);
-	// if (result_2 == (r_val *) NULL) {
-	// 	clnt_perror (clnt, "call failed");
-	// }
+	else if(strcmp(command, "delete") == 0) {
+		remove_from_database_1_arg = malloc(sizeof(char) * 64);
+
+		puts("Enter a name to delete : ");
+		name = getLine();
+
+		strcpy(remove_from_database_1_arg, name);
+
+		result_2 = remove_from_database_1(&remove_from_database_1_arg, clnt);
+		if (result_2 == (r_val *) NULL) {
+			clnt_perror (clnt, "call failed");
+		}
+		else {
+			printf("%i, %s", result_2->num, result_2->message);
+		}
+	}
 	// result_3 = lookup_name_1(&lookup_name_1_arg, clnt);
 	// if (result_3 == (r_val *) NULL) {
 	// 	clnt_perror (clnt, "call failed");
