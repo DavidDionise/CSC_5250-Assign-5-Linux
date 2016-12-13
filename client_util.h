@@ -6,8 +6,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "phone_book.h"
-
 // Reads entire line until \n character
 char* getLine();
 
