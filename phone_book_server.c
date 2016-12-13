@@ -165,10 +165,12 @@ remove_from_database_1_svc(char **argp, struct svc_req *rqstp)
 		result.message = malloc(sizeof(char) * 128);
 		strcpy(result.message, "Entry not found");
 
+		result.entries = NULL;
 	}
 	else {
 		result.num = COUNT;
 		result.message = NULL;
+		result.entries = NULL;
 	}
 
 	fclose(fp);
