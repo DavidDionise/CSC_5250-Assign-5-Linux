@@ -61,8 +61,8 @@ phone_book_prog_1(char *host, char *command)
 		if (result_1 == NULL) {
 			clnt_perror(clnt, "call failed:");
 		}
-		else 
-			printf("head = %s, %s\n", result_1->head->name, result_1->head->number);
+		// else 
+		// 	printf("%s\n\n", result_1->message);
 	}
 
 	// ****************************//
@@ -81,9 +81,9 @@ phone_book_prog_1(char *host, char *command)
 		if (result_2 == (r_val *) NULL) {
 			clnt_perror (clnt, "call failed");
 		}
-		else {
-			printf("%i, %s", result_2->num, result_2->message);
-		}
+		// else if({
+		// 	printf("%i, %s", result_2->num, result_2->message);
+		// }
 	}
 	// result_3 = lookup_name_1(&lookup_name_1_arg, clnt);
 	// if (result_3 == (r_val *) NULL) {

@@ -6,14 +6,10 @@ struct entry {
 	struct entry *next;
 };
 
-struct linked_list {
-  struct entry *head;
-};
-
 struct r_val {
 	int num;
 	string message<256>;
-  linked_list *entries;
+	entry *head;
 };
 
 program PHONE_BOOK_PROG {

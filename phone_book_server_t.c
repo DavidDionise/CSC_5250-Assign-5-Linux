@@ -50,21 +50,11 @@ add_to_database_1_svc(entry *argp, struct svc_req *rqstp)
 		result.num = -1;
 		result.message = malloc(sizeof(char) * 64);
 		strcpy(result.message, "Working");
-		result.head = NULL;
 	}
 	else {
 		result.num = ++COUNT;
 		result.message = malloc(sizeof(char) * 64);
 		strcpy(result.message, "Working");
-
-		result.head = malloc(sizeof(entry));
-		result.head->name = malloc(sizeof(char) * 63);
-		result.head->number = malloc(sizeof(char) * 63);
-
-		strcpy(result.head->name, argp->name);
-		strcpy(result.head->number, argp->number);
-
-		result.head->next = NULL;
 	}
 
 	fclose(fp);
@@ -97,8 +87,8 @@ remove_from_database_1_svc(char **argp, struct svc_req *rqstp)
 		e->number = malloc(sizeof(char) * 16);
 		e->next = NULL;
 
-		e->name[0] = '\0';
-		e->number[0] = '\0';
+		e->name[0] = NULL;
+		e->number[0] = NULL;
 
 		while((c = fgetc(fp)) != '#') {
 			if(c == EOF) {
@@ -106,7 +96,7 @@ remove_from_database_1_svc(char **argp, struct svc_req *rqstp)
 			}
 
 			e->name[i] = c;
-			e->name[++i] = '\0';
+			e->name[++i] = NULL;
 		}
 
 		// Read space
@@ -120,7 +110,7 @@ remove_from_database_1_svc(char **argp, struct svc_req *rqstp)
 			}
 
 			e->number[i] = c;
-			e->number[++i] = '\0';
+			e->number[++i] = NULL;
 		}
 
 		if(!finished_search) {

@@ -26,23 +26,10 @@ bool_t xdr_entry();
 #endif /* Old Style C */
 
 
-struct linked_list {
-	struct entry *head;
-};
-typedef struct linked_list linked_list;
-#ifdef __cplusplus
-extern "C" bool_t xdr_linked_list(XDR *, linked_list*);
-#elif __STDC__
-extern  bool_t xdr_linked_list(XDR *, linked_list*);
-#else /* Old Style C */
-bool_t xdr_linked_list();
-#endif /* Old Style C */
-
-
 struct r_val {
 	int num;
 	char *message;
-	linked_list *entries;
+	entry *head;
 };
 typedef struct r_val r_val;
 #ifdef __cplusplus
