@@ -4,187 +4,29 @@
  * as a guideline for developing your own functions.
  */
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <errno.h>
-
 #include "phone_book.h"
-#include "server_util.h"
-
-void push(linked_list *list, entry *e) {
-	if(list->head == NULL) {
-		list->head = e;
-	}
-	else {
-		entry *current = list->head;
-		while(current) {
-			if(current->next == NULL) {
-				current->next = e;
-				break;
-			}
-			current = current->next;
-		}
-	}
-}
 
 r_val *
 add_to_database_1_svc(entry *argp, struct svc_req *rqstp)
 {
 	static r_val  result;
-	char phone_book_entry[256];
 
-	printf("args %s, %s\n", argp->name, argp->number);
-	FILE *fp = fopen("./database.txt", "a");
+	/*
+	 * insert server code here
+	 */
 
-	strcpy(phone_book_entry, argp->name);
-	strcat(phone_book_entry, "# ");
-	strcat(phone_book_entry, argp->number);
-	strcat(phone_book_entry, "\n");
-
-	printf("entry : %s\n", phone_book_entry);
-
-	if(fputs(phone_book_entry, fp) < 0) {
-		perror("Error writing to file");
-
-		result.num = -1;
-		result.message = NULL;
-	}
-	else {
-		result.num = 1;
-		result.message = malloc(sizeof(char) * 64);
-		strcpy(result.message, "Working");
-	}
-
-	fclose(fp);
-	return(&result);
+	return &result;
 }
 
 r_val *
 remove_from_database_1_svc(char **argp, struct svc_req *rqstp)
 {
 	static r_val  result;
-	char c;
-	int i;
-	int finished_search = 0;
-	int entry_count = 0;
-	int found_entry = 0;
 
-	// Build data structure to hold entries
-	linked_list master_list;
-	master_list.head = '\0';
+	/*
+	 * insert server code here
+	 */
 
-	FILE *fp;
-	if((fp = fopen("database.txt", "r")) < 0) {
-		perror("Error opening file for read");
-		return NULL;
-	}
-
-	while(!finished_search) {
-		i = 0;
-
-		entry *e = malloc(sizeof(entry));
-		e->name = malloc(sizeof(char) * 128);
-		e->number = malloc(sizeof(char) * 16);
-		e->next = '\0';
-
-		e->name[0] = '\0';
-		e->number[0] = '\0';
-
-		while((c = fgetc(fp)) != '#') {
-			if(c == EOF) {
-				puts("EOF");
-				break;
-			}
-
-			e->name[i] = c;
-			e->name[++i] = '\0';
-		}
-
-		// Read space
-		c = fgetc(fp);
-		i = 0;
-
-		while((c = fgetc(fp)) != '\n') {
-			if(c == EOF) {
-				finished_search = 1;
-				break;
-			}
-
-			e->number[i] = c;
-			e->number[++i] = '\0';
-		}
-
-		if(!finished_search) {
-			entry_count++;
-			push(&master_list, e);
-		}
-	}
-
-	entry *current = master_list.head;
-	entry *trail_current;
-
-	while(current) {
-		printf("current = %s\n", current->name);
-		printf("argp : %s\n", *argp);
-
-		if(strcmp(current->name, *argp) == 0) {
-			found_entry = 1;
-			entry_count--;
-
-			if(current == master_list.head) {
-				trail_current = master_list.head;
-				master_list.head = master_list.head->next;
-
-				free(trail_current->name);
-				free(trail_current->number);
-				free(trail_current);
-			}
-			else {
-				trail_current->next = current->next;
-
-				free(current->name);
-				free(current->number);
-				free(current);
-			}
-		}
-		else {
-			trail_current = current;
-			current = current->next;
-		}
-	}
-
-	fclose(fp);
-
-	if((fp = fopen("database.txt", "w")) < 0) {
-		perror("Error opening file for read");
-		return NULL;
-	}
-
-	while(current) {
-		printf("Entry : %s, %s\n", current->name, current->number);
-		current = current->next;
-	}
-
-	if(!found_entry) {
-		result.num = -1;
-		result.message = malloc(sizeof(char) * 128);
-
-		strcpy(result.message, "Entry not found");
-	}
-	else {
-		current = master_list.head;
-		while(current) {
-			fprintf(fp, "%s# %s\n", current->name, current->number);
-			current = current->next;
-		}
-		
-		result.num = entry_count;
-		result.message = malloc(sizeof(char) * 16);
-		strcpy(result.message, "working");
-	}
-
-	fclose(fp);
 	return &result;
 }
 

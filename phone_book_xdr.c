@@ -20,6 +20,16 @@ xdr_entry (XDR *xdrs, entry *objp)
 }
 
 bool_t
+xdr_linked_list (XDR *xdrs, linked_list *objp)
+{
+	register int32_t *buf;
+
+	 if (!xdr_pointer (xdrs, (char **)&objp->head, sizeof (entry), (xdrproc_t) xdr_entry))
+		 return FALSE;
+	return TRUE;
+}
+
+bool_t
 xdr_r_val (XDR *xdrs, r_val *objp)
 {
 	register int32_t *buf;
@@ -28,15 +38,7 @@ xdr_r_val (XDR *xdrs, r_val *objp)
 		 return FALSE;
 	 if (!xdr_string (xdrs, &objp->message, 256))
 		 return FALSE;
-	return TRUE;
-}
-
-bool_t
-xdr_linked_list (XDR *xdrs, linked_list *objp)
-{
-	register int32_t *buf;
-
-	 if (!xdr_pointer (xdrs, (char **)&objp->head, sizeof (entry), (xdrproc_t) xdr_entry))
+	 if (!xdr_pointer (xdrs, (char **)&objp->entries, sizeof (linked_list), (xdrproc_t) xdr_linked_list))
 		 return FALSE;
 	return TRUE;
 }

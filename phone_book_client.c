@@ -3,19 +3,13 @@
  * These are only templates and you can use them
  * as a guideline for developing your own functions.
  */
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
 
 #include "phone_book.h"
-#include "client_util.h"
 
 
 void
-phone_book_prog_1(char *host, char *command)
+phone_book_prog_1(char *host)
 {
-	char *name, *number;
-	
 	CLIENT *clnt;
 	r_val  *result_1;
 	entry  add_to_database_1_arg;
@@ -38,61 +32,30 @@ phone_book_prog_1(char *host, char *command)
 	}
 #endif	/* DEBUG */
 
-	if(strcmp(command, "add") == 0) {
-		puts("Enter the name : ");
-		name = getLine();
-
-		puts("Enter the number : ");
-		number = getLine();
-
-		add_to_database_1_arg.name = malloc(sizeof(char) * 64);
-		add_to_database_1_arg.number = malloc(sizeof(char) * 64);
-
-		strcpy(add_to_database_1_arg.name, name);
-		strcpy(add_to_database_1_arg.number, number);
-
-		add_to_database_1_arg.next = NULL;
-
-		result_1 = add_to_database_1(&add_to_database_1_arg, clnt);
-		if (result_1 == NULL) {
-			clnt_perror(clnt, "call failed:");
-		}
-		else {
-			printf("return val : %i, %s", result_1->num, result_1->message);
-		}
+	result_1 = add_to_database_1(&add_to_database_1_arg, clnt);
+	if (result_1 == (r_val *) NULL) {
+		clnt_perror (clnt, "call failed");
 	}
-	else if(strcmp(command, "delete") == 0) {
-		remove_from_database_1_arg = malloc(sizeof(char) * 64);
-
-		puts("Enter a name to delete : ");
-		name = getLine();
-
-		strcpy(remove_from_database_1_arg, name);
-
-		result_2 = remove_from_database_1(&remove_from_database_1_arg, clnt);
-		if (result_2 == (r_val *) NULL) {
-			clnt_perror (clnt, "call failed");
-		}
-		else {
-			printf("%i, %s", result_2->num, result_2->message);
-		}
+	result_2 = remove_from_database_1(&remove_from_database_1_arg, clnt);
+	if (result_2 == (r_val *) NULL) {
+		clnt_perror (clnt, "call failed");
 	}
-	// result_3 = lookup_name_1(&lookup_name_1_arg, clnt);
-	// if (result_3 == (r_val *) NULL) {
-	// 	clnt_perror (clnt, "call failed");
-	// }
-	// result_4 = list_1((void*)&list_1_arg, clnt);
-	// if (result_4 == (r_val *) NULL) {
-	// 	clnt_perror (clnt, "call failed");
-	// }
-	// result_5 = quit_1((void*)&quit_1_arg, clnt);
-	// if (result_5 == (int *) NULL) {
-	// 	clnt_perror (clnt, "call failed");
-	// }
-	// result_6 = terminate_1((void*)&terminate_1_arg, clnt);
-	// if (result_6 == (int *) NULL) {
-	// 	clnt_perror (clnt, "call failed");
-	// }
+	result_3 = lookup_name_1(&lookup_name_1_arg, clnt);
+	if (result_3 == (r_val *) NULL) {
+		clnt_perror (clnt, "call failed");
+	}
+	result_4 = list_1((void*)&list_1_arg, clnt);
+	if (result_4 == (r_val *) NULL) {
+		clnt_perror (clnt, "call failed");
+	}
+	result_5 = quit_1((void*)&quit_1_arg, clnt);
+	if (result_5 == (int *) NULL) {
+		clnt_perror (clnt, "call failed");
+	}
+	result_6 = terminate_1((void*)&terminate_1_arg, clnt);
+	if (result_6 == (int *) NULL) {
+		clnt_perror (clnt, "call failed");
+	}
 #ifndef	DEBUG
 	clnt_destroy (clnt);
 #endif	 /* DEBUG */
@@ -103,19 +66,12 @@ int
 main (int argc, char *argv[])
 {
 	char *host;
-	char *command;
 
 	if (argc < 2) {
 		printf ("usage: %s server_host\n", argv[0]);
 		exit (1);
 	}
 	host = argv[1];
-
-	while(1) {
-		puts("Enter a command to operate the phone book : ");
-		command = getLine();
-
-		phone_book_prog_1( host, command );
-	}
+	phone_book_prog_1 (host);
 exit (0);
 }

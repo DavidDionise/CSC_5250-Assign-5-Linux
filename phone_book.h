@@ -21,16 +21,17 @@ struct entry {
 };
 typedef struct entry entry;
 
-struct r_val {
-	int num;
-	char *message;
-};
-typedef struct r_val r_val;
-
 struct linked_list {
 	struct entry *head;
 };
 typedef struct linked_list linked_list;
+
+struct r_val {
+	int num;
+	char *message;
+	linked_list *entries;
+};
+typedef struct r_val r_val;
 
 #define PHONE_BOOK_PROG 0x55550011
 #define PHONE_BOOK_VERS 1
@@ -82,13 +83,13 @@ extern int phone_book_prog_1_freeresult ();
 
 #if defined(__STDC__) || defined(__cplusplus)
 extern  bool_t xdr_entry (XDR *, entry*);
-extern  bool_t xdr_r_val (XDR *, r_val*);
 extern  bool_t xdr_linked_list (XDR *, linked_list*);
+extern  bool_t xdr_r_val (XDR *, r_val*);
 
 #else /* K&R C */
 extern bool_t xdr_entry ();
-extern bool_t xdr_r_val ();
 extern bool_t xdr_linked_list ();
+extern bool_t xdr_r_val ();
 
 #endif /* K&R C */
 
