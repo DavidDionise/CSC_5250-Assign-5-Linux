@@ -1,5 +1,4 @@
 David# 45678
-Lydia# 56870
 Sara# 456789
 Davd# 45678
 Chales# 98765

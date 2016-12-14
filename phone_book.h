@@ -6,9 +6,12 @@
 #ifndef _PHONE_BOOK_H_RPCGEN
 #define _PHONE_BOOK_H_RPCGEN
 
-#define RPCGEN_VERSION	199506
-
 #include <rpc/rpc.h>
+
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 
 struct entry {
@@ -17,14 +20,6 @@ struct entry {
 	struct entry *next;
 };
 typedef struct entry entry;
-#ifdef __cplusplus
-extern "C" bool_t xdr_entry(XDR *, entry*);
-#elif __STDC__
-extern  bool_t xdr_entry(XDR *, entry*);
-#else /* Old Style C */
-bool_t xdr_entry();
-#endif /* Old Style C */
-
 
 struct r_val {
 	int num;
@@ -32,77 +27,67 @@ struct r_val {
 	entry *head;
 };
 typedef struct r_val r_val;
-#ifdef __cplusplus
-extern "C" bool_t xdr_r_val(XDR *, r_val*);
-#elif __STDC__
-extern  bool_t xdr_r_val(XDR *, r_val*);
-#else /* Old Style C */
-bool_t xdr_r_val();
-#endif /* Old Style C */
 
+#define PHONE_BOOK_PROG 0x55550011
+#define PHONE_BOOK_VERS 1
 
-#define PHONE_BOOK_PROG ((rpc_uint)0x55550011)
-#define PHONE_BOOK_VERS ((rpc_uint)1)
-
-#ifdef __cplusplus
-#define ADD_TO_DATABASE ((rpc_uint)1)
-extern "C" r_val * add_to_database_1(entry *, CLIENT *);
-extern "C" r_val * add_to_database_1_svc(entry *, struct svc_req *);
-#define REMOVE_FROM_DATABASE ((rpc_uint)2)
-extern "C" r_val * remove_from_database_1(char **, CLIENT *);
-extern "C" r_val * remove_from_database_1_svc(char **, struct svc_req *);
-#define LOOKUP_NAME ((rpc_uint)3)
-extern "C" r_val * lookup_name_1(char **, CLIENT *);
-extern "C" r_val * lookup_name_1_svc(char **, struct svc_req *);
-#define LIST ((rpc_uint)4)
-extern "C" r_val * list_1(void *, CLIENT *);
-extern "C" r_val * list_1_svc(void *, struct svc_req *);
-#define QUIT ((rpc_uint)5)
-extern "C" int * quit_1(void *, CLIENT *);
-extern "C" int * quit_1_svc(void *, struct svc_req *);
-#define TERMINATE ((rpc_uint)6)
-extern "C" int * terminate_1(void *, CLIENT *);
-extern "C" int * terminate_1_svc(void *, struct svc_req *);
-
-#elif __STDC__
-#define ADD_TO_DATABASE ((rpc_uint)1)
+#if defined(__STDC__) || defined(__cplusplus)
+#define ADD_TO_DATABASE 1
 extern  r_val * add_to_database_1(entry *, CLIENT *);
 extern  r_val * add_to_database_1_svc(entry *, struct svc_req *);
-#define REMOVE_FROM_DATABASE ((rpc_uint)2)
+#define REMOVE_FROM_DATABASE 2
 extern  r_val * remove_from_database_1(char **, CLIENT *);
 extern  r_val * remove_from_database_1_svc(char **, struct svc_req *);
-#define LOOKUP_NAME ((rpc_uint)3)
+#define LOOKUP_NAME 3
 extern  r_val * lookup_name_1(char **, CLIENT *);
 extern  r_val * lookup_name_1_svc(char **, struct svc_req *);
-#define LIST ((rpc_uint)4)
+#define LIST 4
 extern  r_val * list_1(void *, CLIENT *);
 extern  r_val * list_1_svc(void *, struct svc_req *);
-#define QUIT ((rpc_uint)5)
+#define QUIT 5
 extern  int * quit_1(void *, CLIENT *);
 extern  int * quit_1_svc(void *, struct svc_req *);
-#define TERMINATE ((rpc_uint)6)
+#define TERMINATE 6
 extern  int * terminate_1(void *, CLIENT *);
 extern  int * terminate_1_svc(void *, struct svc_req *);
+extern int phone_book_prog_1_freeresult (SVCXPRT *, xdrproc_t, caddr_t);
 
-#else /* Old Style C */
-#define ADD_TO_DATABASE ((rpc_uint)1)
+#else /* K&R C */
+#define ADD_TO_DATABASE 1
 extern  r_val * add_to_database_1();
 extern  r_val * add_to_database_1_svc();
-#define REMOVE_FROM_DATABASE ((rpc_uint)2)
+#define REMOVE_FROM_DATABASE 2
 extern  r_val * remove_from_database_1();
 extern  r_val * remove_from_database_1_svc();
-#define LOOKUP_NAME ((rpc_uint)3)
+#define LOOKUP_NAME 3
 extern  r_val * lookup_name_1();
 extern  r_val * lookup_name_1_svc();
-#define LIST ((rpc_uint)4)
+#define LIST 4
 extern  r_val * list_1();
 extern  r_val * list_1_svc();
-#define QUIT ((rpc_uint)5)
+#define QUIT 5
 extern  int * quit_1();
 extern  int * quit_1_svc();
-#define TERMINATE ((rpc_uint)6)
+#define TERMINATE 6
 extern  int * terminate_1();
 extern  int * terminate_1_svc();
-#endif /* Old Style C */
+extern int phone_book_prog_1_freeresult ();
+#endif /* K&R C */
+
+/* the xdr functions */
+
+#if defined(__STDC__) || defined(__cplusplus)
+extern  bool_t xdr_entry (XDR *, entry*);
+extern  bool_t xdr_r_val (XDR *, r_val*);
+
+#else /* K&R C */
+extern bool_t xdr_entry ();
+extern bool_t xdr_r_val ();
+
+#endif /* K&R C */
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* !_PHONE_BOOK_H_RPCGEN */

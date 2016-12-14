@@ -38,9 +38,9 @@ phone_book_prog_1(char *host, char *command)
 	}
 #endif	/* DEBUG */
 
-	// ****************************//
-	// ********* ADD **************//
-	// ****************************//
+	// **************************** //
+	// ********* ADD ************** //
+	// **************************** //
 
 	if(strcmp(command, "add") == 0) {
 		puts("Enter the name : ");
@@ -61,13 +61,23 @@ phone_book_prog_1(char *host, char *command)
 		if (result_1 == NULL) {
 			clnt_perror(clnt, "call failed:");
 		}
-		// else 
-		// 	printf("%s\n\n", result_1->message);
+		else if(result_1->num < 0){
+			printf("%s\n", result_1->message);
+		}
+		else {
+			printf("Entries in phone book : %i\n", result_1->num);
+		}
+		free(name);
+		free(number);
+		free(add_to_database_1_arg.name);
+		free(add_to_database_1_arg.number);
+
+		printf("\n");
 	}
 
-	// ****************************//
-	// ********* DELETE ***********//
-	// ****************************//
+	// **************************** //
+	// ********* DELETE *********** //
+	// **************************** //
 
 	else if(strcmp(command, "delete") == 0) {
 		remove_from_database_1_arg = malloc(sizeof(char) * 64);
@@ -80,19 +90,66 @@ phone_book_prog_1(char *host, char *command)
 		result_2 = remove_from_database_1(&remove_from_database_1_arg, clnt);
 		if (result_2 == (r_val *) NULL) {
 			clnt_perror (clnt, "call failed");
+			printf("\n");
 		}
-		// else if({
-		// 	printf("%i, %s", result_2->num, result_2->message);
-		// }
+		else if(result_2->num < 0){
+			printf("%s\n", result_2->message);
+		}
+		else {
+			printf("Entries in phone book : %i\n", result_2->num);
+		}
+		free(name);
+		free(remove_from_database_1_arg);
+
+		printf("\n");
 	}
-	// result_3 = lookup_name_1(&lookup_name_1_arg, clnt);
-	// if (result_3 == (r_val *) NULL) {
-	// 	clnt_perror (clnt, "call failed");
-	// }
-	// result_4 = list_1((void*)&list_1_arg, clnt);
-	// if (result_4 == (r_val *) NULL) {
-	// 	clnt_perror (clnt, "call failed");
-	// }
+
+	// **************************** //
+	// *********** QUERY ********** //
+	// **************************** //
+
+	else if(strcmp(command, "query") == 0) {
+		puts("Enter a name to search for :");
+
+		name = getLine();
+		lookup_name_1_arg = malloc(sizeof(char) * 128);
+
+		strcpy(lookup_name_1_arg, name);
+
+		result_3 = lookup_name_1(&lookup_name_1_arg, clnt);
+		if (result_3 == (r_val *) NULL) {
+			clnt_perror (clnt, "call failed");
+		}
+		else if(result_3->num < 0) {
+			printf("%s\n", result_3->message);
+		}
+		else {
+			entry *current = result_3->head;
+			while(current) {
+				printf("%s, %s\n", current->name, current->number);
+				current = current->next;
+			}
+		}
+	}
+
+	// **************************** //
+	// *********** LIST *********** //
+	// **************************** //
+	
+	result_4 = list_1((void*)&list_1_arg, clnt);
+	if (result_4 == (r_val *) NULL) {
+		clnt_perror (clnt, "call failed");
+	}
+	else if(result_4->num < 0) {
+		printf("%s\n", result_4->message);
+	}
+	else {
+		entry *current = result_4->head;
+		while(current) {
+			printf("%s, %s\n", current->name, current->number);
+			current = current->next;
+		}
+	}
 	// result_5 = quit_1((void*)&quit_1_arg, clnt);
 	// if (result_5 == (int *) NULL) {
 	// 	clnt_perror (clnt, "call failed");
