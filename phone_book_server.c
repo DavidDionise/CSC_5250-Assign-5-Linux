@@ -29,15 +29,21 @@ add_to_database_1_svc(entry *argp, struct svc_req *rqstp)
 		result.num = -1;
 		result.message = malloc(sizeof(char) * 64);
 		strcpy(result.message, "Error writing to file");
-		result.head = NULL;
 	}
 	else {
-		result.num = ++COUNT;
-		result.message = malloc(sizeof(char) * 64);
-		strcpy(result.message, "Success");
-
-		result.head = NULL;
+		int entry_count = countEntries();
+		if(entry_count < 0) {
+			result.num = -1;
+			result.message = malloc(sizeof(char) * 64);
+			strcpy(result.message, "Error counting entries");
+		}
+		else {
+			result.num = entry_count;
+			result.message = malloc(sizeof(char) * 64);
+			strcpy(result.message, "Success");
+		}
 	}
+	result.head = NULL;
 
 	fclose(fp);
 	return(&result);
@@ -66,7 +72,6 @@ remove_from_database_1_svc(char **argp, struct svc_req *rqstp)
 
 		if(strcmp(current->name, *argp) == 0) {
 			found_entry = 1;
-			COUNT--;
 
 			if(current == head) {
 				if(head->next == NULL) {
@@ -115,12 +120,19 @@ remove_from_database_1_svc(char **argp, struct svc_req *rqstp)
 			current = current->next;
 		}
 
-		result.num = COUNT;
-		result.message = malloc(sizeof(char) * 64);
-		strcpy(result.message, "Success");
-
-		result.head = NULL;
+		int entry_count = countEntries();
+		if(entry_count < 0) {
+			result.num = -1;
+			result.message = malloc(sizeof(char) * 64);
+			strcpy(result.message, "Error counting entries");
+		}
+		else {
+			result.num = entry_count;
+			result.message = malloc(sizeof(char) * 64);
+			strcpy(result.message, "Success");
+		}
 	}
+	result.head = NULL;
 
 	fclose(fp);
 	return &result;
@@ -165,10 +177,18 @@ lookup_name_1_svc(char **argp, struct svc_req *rqstp)
 		result.head = NULL;
 	}
 	else {
-		result.num = COUNT;
-		result.message = malloc(sizeof(char) * 64);
-		strcpy(result.message, "Success");
-		result.head = head;
+		int entry_count = countEntries();
+		if(entry_count < 0) {
+			result.num = -1;
+			result.message = malloc(sizeof(char) * 64);
+			strcpy(result.message, "Error counting entries");
+		}
+		else {
+			result.num = entry_count;
+			result.message = malloc(sizeof(char) * 64);
+			strcpy(result.message, "Success");
+			result.head = head;
+		}
 	}
 
 	return &result;

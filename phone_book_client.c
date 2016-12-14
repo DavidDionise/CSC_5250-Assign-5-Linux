@@ -130,6 +130,7 @@ phone_book_prog_1(char *host, char *command)
 				current = current->next;
 			}
 		}
+		printf("\n");
 	}
 
 	// **************************** //
@@ -151,6 +152,7 @@ phone_book_prog_1(char *host, char *command)
 				current = current->next;
 			}
 		}
+		printf("\n");
 	}
 	// result_5 = quit_1((void*)&quit_1_arg, clnt);
 	// if (result_5 == (int *) NULL) {

@@ -4,8 +4,6 @@
 
 #include "server_util.h"
 
-int COUNT = 0;
-
 void push(entry **head, entry *e) {
 	if(*head == NULL) {
 		*head = e;
@@ -114,6 +112,26 @@ int buildList(entry **head) {
 	}
 
 	fclose(fp);
+	return 0;
 }
+
+int countEntries() {
+	FILE *fp;
+	char c;
+	int count;
+
+	if((fp = fopen("database.txt", "r")) < 0) {
+		return -1;
+	}
+
+	while((c = fgetc(fp)) != EOF) {
+		if(c == '\n')
+			count++;
+	}
+
+	fclose(fp);
+	return count;
+}
+
 
 
