@@ -10,6 +10,7 @@
 #include "phone_book.h"
 #include "client_util.h"
 
+int QUIT_PROGRAM = 0;
 
 void
 phone_book_prog_1(char *host, char *command)
@@ -154,14 +155,24 @@ phone_book_prog_1(char *host, char *command)
 		}
 		printf("\n");
 	}
-	// result_5 = quit_1((void*)&quit_1_arg, clnt);
-	// if (result_5 == (int *) NULL) {
-	// 	clnt_perror (clnt, "call failed");
-	// }
-	// result_6 = terminate_1((void*)&terminate_1_arg, clnt);
-	// if (result_6 == (int *) NULL) {
-	// 	clnt_perror (clnt, "call failed");
-	// }
+
+	// **************************** //
+	// ********** QUIT ************ //
+	// **************************** //
+
+	else if(strcmp(command, "quit") == 0) {
+		QUIT_PROGRAM = 1;
+	}
+
+	// **************************** //
+	// ********* TERMINATE ******** //
+	// **************************** //
+	
+	else if(strcmp(command, "terminate") == 0) {
+		QUIT_PROGRAM = 1;
+		result_6 = terminate_1((void*)&terminate_1_arg, clnt);
+	}
+	
 #ifndef	DEBUG
 	clnt_destroy (clnt);
 #endif	 /* DEBUG */
@@ -180,7 +191,7 @@ main (int argc, char *argv[])
 	}
 	host = argv[1];
 
-	while(1) {
+	while(!QUIT_PROGRAM) {
 		puts("Enter a command to operate the phone book : ");
 		command = getLine();
 

@@ -118,7 +118,7 @@ int buildList(entry **head) {
 int countEntries() {
 	FILE *fp;
 	char c;
-	int count;
+	int count = 0;
 
 	if((fp = fopen("database.txt", "r")) < 0) {
 		return -1;

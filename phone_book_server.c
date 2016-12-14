@@ -30,7 +30,10 @@ add_to_database_1_svc(entry *argp, struct svc_req *rqstp)
 		result.message = malloc(sizeof(char) * 64);
 		strcpy(result.message, "Error writing to file");
 	}
+
 	else {
+		fclose(fp);
+
 		int entry_count = countEntries();
 		if(entry_count < 0) {
 			result.num = -1;
@@ -45,7 +48,6 @@ add_to_database_1_svc(entry *argp, struct svc_req *rqstp)
 	}
 	result.head = NULL;
 
-	fclose(fp);
 	return(&result);
 }
 
@@ -119,6 +121,7 @@ remove_from_database_1_svc(char **argp, struct svc_req *rqstp)
 			fprintf(fp, "%s# %s\n", current->name, current->number);
 			current = current->next;
 		}
+		fclose(fp);
 
 		int entry_count = countEntries();
 		if(entry_count < 0) {
@@ -134,7 +137,6 @@ remove_from_database_1_svc(char **argp, struct svc_req *rqstp)
 	}
 	result.head = NULL;
 
-	fclose(fp);
 	return &result;
 }
 
@@ -222,12 +224,7 @@ int *
 quit_1_svc(void *argp, struct svc_req *rqstp)
 {
 	static int  result;
-
-	/*
-	 * insert server code here
-	 */
-
-	return &result;
+	return NULL;
 }
 
 int *
@@ -235,9 +232,5 @@ terminate_1_svc(void *argp, struct svc_req *rqstp)
 {
 	static int  result;
 
-	/*
-	 * insert server code here
-	 */
-
-	return &result;
+	exit(0);
 }
