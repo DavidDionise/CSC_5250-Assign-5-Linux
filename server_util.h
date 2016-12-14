@@ -8,6 +8,12 @@
 
 #include "phone_book.h"
 
-int COUNT = 0;
+extern int COUNT;
+
+void push(entry **head, entry *e);
+
+int removeNode(entry **head, entry **e);
+
+int buildList(entry **head);
 
 #endif

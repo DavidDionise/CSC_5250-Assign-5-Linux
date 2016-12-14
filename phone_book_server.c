@@ -12,63 +12,6 @@
 #include "phone_book.h"
 #include "server_util.h"
 
-void push(entry **head, entry *e) {
-	if(*head == NULL) {
-		*head = e;
-	}
-	else {
-		entry *current = *head;
-		while(current) {
-			if(current->next == NULL) {
-				current->next = e;
-				break;
-			}
-			current = current->next;
-		}
-	}
-}
-
-int removeNode(entry **head, entry **e) {
-	int found = 0;
-
-	if(*e == *head) {
-		*head = (*head)->next;
-
-		found = 1;
-
-		free((*e)->name);
-		free((*e)->number);
-		free(*e);
-	}
-	else {
-		entry *current = *head;
-
-		while(current) {
-			if(current->next == *e) {
-				found = 1;
-				entry *temp = current->next;
-				current->next = temp->next;
-
-				found = 1;
-
-				free(temp->name);
-				free(temp->number);
-				free(temp);
-
-				break;
-			}
-			else {
-				current = current->next;
-			}
-		}
-	}
-
-	if(found) 
-		return 0;
-	else
-		return -1;
-}
-
 r_val *
 add_to_database_1_svc(entry *argp, struct svc_req *rqstp)
 {
@@ -104,65 +47,22 @@ r_val *
 remove_from_database_1_svc(char **argp, struct svc_req *rqstp)
 {
 	static r_val  result;
+	FILE *fp;
 	char c;
 	int i;
-	int finished_search = 0;
 	int found_entry = 0;
 
-	// Build data structure to hold entries
 	entry *head = NULL;
 
-	FILE *fp;
-	if((fp = fopen("database.txt", "r")) < 0) {
-		perror("Error opening file for read");
-		return NULL;
-	}
-
-	while(!finished_search) {
-		i = 0;
-
-		entry *e = malloc(sizeof(entry));
-		e->name = malloc(sizeof(char) * 128);
-		e->number = malloc(sizeof(char) * 16);
-		e->next = NULL;
-
-		e->name[0] = '\0';
-		e->number[0] = '\0';
-
-		while((c = fgetc(fp)) != '#') {
-			if(c == EOF) {
-				break;
-			}
-
-			e->name[i] = c;
-			e->name[++i] = '\0';
-		}
-
-		// Read space
-		c = fgetc(fp);
-		i = 0;
-
-		while((c = fgetc(fp)) != '\n') {
-			if(c == EOF) {
-				finished_search = 1;
-				break;
-			}
-
-			e->number[i] = c;
-			e->number[++i] = '\0';
-		}
-
-		if(!finished_search) {
-			push(&head, e);
-		}
-	}
+	// Build data structure to hold entries
+	buildList(&head);
 
 	entry *current = head;
 	entry *trail_current;
 
 	current = head;
 
-	while(current) {
+	while(current && !found_entry) {
 
 		if(strcmp(current->name, *argp) == 0) {
 			found_entry = 1;
@@ -196,8 +96,6 @@ remove_from_database_1_svc(char **argp, struct svc_req *rqstp)
 			current = current->next;
 		}
 	}
-
-	fclose(fp);
 
 	if(!found_entry) {
 		result.num = -1;
@@ -240,50 +138,7 @@ lookup_name_1_svc(char **argp, struct svc_req *rqstp)
 	// Build data structure to hold entries
 	entry *head = NULL;
 
-	FILE *fp;
-	if((fp = fopen("database.txt", "r")) < 0) {
-		perror("Error opening file for read");
-		return NULL;
-	}
-
-	while(!finished_build) {
-		i = 0;
-
-		entry *e = malloc(sizeof(entry));
-		e->name = malloc(sizeof(char) * 128);
-		e->number = malloc(sizeof(char) * 16);
-		e->next = NULL;
-
-		e->name[0] = '\0';
-		e->number[0] = '\0';
-
-		while((c = fgetc(fp)) != '#') {
-			if(c == EOF) {
-				break;
-			}
-
-			e->name[i] = c;
-			e->name[++i] = '\0';
-		}
-
-		// Read space
-		c = fgetc(fp);
-		i = 0;
-
-		while((c = fgetc(fp)) != '\n') {
-			if(c == EOF) {
-				finished_build = 1;
-				break;
-			}
-
-			e->number[i] = c;
-			e->number[++i] = '\0';
-		}
-
-		if(!finished_build) {
-			push(&head, e);
-		}
-	}
+	buildList(&head);
 
 	entry *current = head;
 	entry *trail_current;

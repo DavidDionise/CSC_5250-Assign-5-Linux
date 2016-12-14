@@ -12,7 +12,7 @@ SOURCES_SVC.c =
 SOURCES_SVC.h = 
 SOURCES.x = phone_book.x
 
-TARGETS_SVC.c = phone_book_svc.c phone_book_server.c phone_book_xdr.c 
+TARGETS_SVC.c = phone_book_svc.c server_util.c phone_book_server.c phone_book_xdr.c 
 TARGETS_CLNT.c = phone_book_clnt.c client_util.c phone_book_client.c phone_book_xdr.c 
 TARGETS = phone_book.h phone_book_xdr.c client_util.c phone_book_clnt.c phone_book_svc.c phone_book_client.c phone_book_server.c
 
