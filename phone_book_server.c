@@ -12,12 +12,12 @@
 #include "phone_book.h"
 #include "server_util.h"
 
-void push(entry *head, entry *e) {
-	if(head == NULL) {
-		head = e;
+void push(entry **head, entry *e) {
+	if(*head == NULL) {
+		*head = e;
 	}
 	else {
-		entry *current = head;
+		entry *current = *head;
 		while(current) {
 			if(current->next == NULL) {
 				current->next = e;
@@ -28,13 +28,53 @@ void push(entry *head, entry *e) {
 	}
 }
 
+int removeNode(entry **head, entry **e) {
+	int found = 0;
+
+	if(*e == *head) {
+		*head = (*head)->next;
+
+		found = 1;
+
+		free((*e)->name);
+		free((*e)->number);
+		free(*e);
+	}
+	else {
+		entry *current = *head;
+
+		while(current) {
+			if(current->next == *e) {
+				found = 1;
+				entry *temp = current->next;
+				current->next = temp->next;
+
+				found = 1;
+
+				free(temp->name);
+				free(temp->number);
+				free(temp);
+
+				break;
+			}
+			else {
+				current = current->next;
+			}
+		}
+	}
+
+	if(found) 
+		return 0;
+	else
+		return -1;
+}
+
 r_val *
 add_to_database_1_svc(entry *argp, struct svc_req *rqstp)
 {
 	static r_val  result;
 	char phone_book_entry[256];
 
-	printf("args %s, %s\n", argp->name, argp->number);
 	FILE *fp = fopen("./database.txt", "a");
 
 	strcpy(phone_book_entry, argp->name);
@@ -42,29 +82,18 @@ add_to_database_1_svc(entry *argp, struct svc_req *rqstp)
 	strcat(phone_book_entry, argp->number);
 	strcat(phone_book_entry, "\n");
 
-	printf("entry : %s\n", phone_book_entry);
-
 	if(fputs(phone_book_entry, fp) < 0) {
-		perror("Error writing to file");
-
 		result.num = -1;
 		result.message = malloc(sizeof(char) * 64);
-		strcpy(result.message, "Working");
+		strcpy(result.message, "Error writing to file");
 		result.head = NULL;
 	}
 	else {
 		result.num = ++COUNT;
 		result.message = malloc(sizeof(char) * 64);
-		strcpy(result.message, "Working");
+		strcpy(result.message, "Success");
 
-		result.head = malloc(sizeof(entry));
-		result.head->name = malloc(sizeof(char) * 63);
-		result.head->number = malloc(sizeof(char) * 63);
-
-		strcpy(result.head->name, argp->name);
-		strcpy(result.head->number, argp->number);
-
-		result.head->next = NULL;
+		result.head = NULL;
 	}
 
 	fclose(fp);
@@ -124,14 +153,17 @@ remove_from_database_1_svc(char **argp, struct svc_req *rqstp)
 		}
 
 		if(!finished_search) {
-			push(head, e);
+			push(&head, e);
 		}
 	}
 
 	entry *current = head;
 	entry *trail_current;
 
+	current = head;
+
 	while(current) {
+
 		if(strcmp(current->name, *argp) == 0) {
 			found_entry = 1;
 			COUNT--;
@@ -167,15 +199,6 @@ remove_from_database_1_svc(char **argp, struct svc_req *rqstp)
 
 	fclose(fp);
 
-	if((fp = fopen("database.txt", "w")) < 0) {
-		perror("Error opening file for read");
-		return NULL;
-	}
-
-	// while(current) {
-	// 	current = current->next;
-	// }
-
 	if(!found_entry) {
 		result.num = -1;
 		result.message = malloc(sizeof(char) * 128);
@@ -183,9 +206,22 @@ remove_from_database_1_svc(char **argp, struct svc_req *rqstp)
 		strcpy(result.message, "Entry not found");
 	}
 	else {
+		if((fp = fopen("database.txt", "w")) < 0) {
+			perror("Error opening file for read");
+			return NULL;
+		}
+
+		current = head;
+		while(current) {
+			fprintf(fp, "%s# %s\n", current->name, current->number);
+			current = current->next;
+		}
+
 		result.num = COUNT;
 		result.message = malloc(sizeof(char) * 64);
-		strcpy(result.message, "Working");
+		strcpy(result.message, "Success");
+
+		result.head = NULL;
 	}
 
 	fclose(fp);
@@ -196,10 +232,86 @@ r_val *
 lookup_name_1_svc(char **argp, struct svc_req *rqstp)
 {
 	static r_val  result;
+	char c;
+	int i;
+	int finished_build = 0;
+	int found_entry = 0;
 
-	/*
-	 * insert server code here
-	 */
+	// Build data structure to hold entries
+	entry *head = NULL;
+
+	FILE *fp;
+	if((fp = fopen("database.txt", "r")) < 0) {
+		perror("Error opening file for read");
+		return NULL;
+	}
+
+	while(!finished_build) {
+		i = 0;
+
+		entry *e = malloc(sizeof(entry));
+		e->name = malloc(sizeof(char) * 128);
+		e->number = malloc(sizeof(char) * 16);
+		e->next = NULL;
+
+		e->name[0] = '\0';
+		e->number[0] = '\0';
+
+		while((c = fgetc(fp)) != '#') {
+			if(c == EOF) {
+				break;
+			}
+
+			e->name[i] = c;
+			e->name[++i] = '\0';
+		}
+
+		// Read space
+		c = fgetc(fp);
+		i = 0;
+
+		while((c = fgetc(fp)) != '\n') {
+			if(c == EOF) {
+				finished_build = 1;
+				break;
+			}
+
+			e->number[i] = c;
+			e->number[++i] = '\0';
+		}
+
+		if(!finished_build) {
+			push(&head, e);
+		}
+	}
+
+	entry *current = head;
+	entry *trail_current;
+
+	current = head;
+
+	while(current) {
+
+		if(strncmp(current->name, *argp, strlen(*argp)) == 0)
+			found_entry = 1;
+		else 
+			removeNode(&head, &current);
+
+		current = current->next;
+	}
+
+	if(!found_entry) {
+		result.num = -1;
+		result.message = malloc(sizeof(char) * 64);;
+		strcpy(result.message, "No entries beginning with those characters");
+		result.head = NULL;
+	}
+	else {
+		result.num = COUNT;
+		result.message = malloc(sizeof(char) * 64);
+		strcpy(result.message, "Sucess");
+		result.head = head;
+	}
 
 	return &result;
 }
