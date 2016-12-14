@@ -136,18 +136,20 @@ phone_book_prog_1(char *host, char *command)
 	// *********** LIST *********** //
 	// **************************** //
 	
-	result_4 = list_1((void*)&list_1_arg, clnt);
-	if (result_4 == (r_val *) NULL) {
-		clnt_perror (clnt, "call failed");
-	}
-	else if(result_4->num < 0) {
-		printf("%s\n", result_4->message);
-	}
-	else {
-		entry *current = result_4->head;
-		while(current) {
-			printf("%s, %s\n", current->name, current->number);
-			current = current->next;
+	else if(strcmp(command, "list") == 0) {
+		result_4 = list_1((void*)&list_1_arg, clnt);
+		if (result_4 == (r_val *) NULL) {
+			clnt_perror (clnt, "call failed");
+		}
+		else if(result_4->num < 0) {
+			printf("%s\n", result_4->message);
+		}
+		else {
+			entry *current = result_4->head;
+			while(current) {
+				printf("%s, %s\n", current->name, current->number);
+				current = current->next;
+			}
 		}
 	}
 	// result_5 = quit_1((void*)&quit_1_arg, clnt);

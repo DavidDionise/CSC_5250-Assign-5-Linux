@@ -147,12 +147,15 @@ lookup_name_1_svc(char **argp, struct svc_req *rqstp)
 
 	while(current) {
 
-		if(strncmp(current->name, *argp, strlen(*argp)) == 0)
+		if(strncmp(current->name, *argp, strlen(*argp)) == 0) {
 			found_entry = 1;
-		else 
-			removeNode(&head, &current);
-
-		current = current->next;
+			current = current->next;
+		}
+		else {
+			entry *temp = current;
+			current = current->next;
+			removeNode(&head, &temp);
+		}
 	}
 
 	if(!found_entry) {
@@ -164,7 +167,7 @@ lookup_name_1_svc(char **argp, struct svc_req *rqstp)
 	else {
 		result.num = COUNT;
 		result.message = malloc(sizeof(char) * 64);
-		strcpy(result.message, "Sucess");
+		strcpy(result.message, "Success");
 		result.head = head;
 	}
 
@@ -177,7 +180,7 @@ list_1_svc(void *argp, struct svc_req *rqstp)
 	static r_val  result;
 
 	entry *head = NULL;
-	
+
 	if(buildList(&head) < 0) {
 		result.num = -1;
 		result.message = malloc(sizeof(char) * 64);
