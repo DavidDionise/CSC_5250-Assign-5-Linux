@@ -176,9 +176,21 @@ list_1_svc(void *argp, struct svc_req *rqstp)
 {
 	static r_val  result;
 
-	/*
-	 * insert server code here
-	 */
+	entry *head = NULL;
+	
+	if(buildList(&head) < 0) {
+		result.num = -1;
+		result.message = malloc(sizeof(char) * 64);
+		strcpy(result.message, "Error compiling entries");
+		result.head = NULL;
+	}
+
+	else {
+		result.num = 1;
+		result.message = malloc(sizeof(char) * 64);
+		strcpy(result.message, "Success");
+		result.head = head;
+	}
 
 	return &result;
 }

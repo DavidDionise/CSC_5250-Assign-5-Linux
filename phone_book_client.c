@@ -38,9 +38,9 @@ phone_book_prog_1(char *host, char *command)
 	}
 #endif	/* DEBUG */
 
-	// ****************************//
-	// ********* ADD **************//
-	// ****************************//
+	// **************************** //
+	// ********* ADD ************** //
+	// **************************** //
 
 	if(strcmp(command, "add") == 0) {
 		puts("Enter the name : ");
@@ -75,9 +75,9 @@ phone_book_prog_1(char *host, char *command)
 		printf("\n");
 	}
 
-	// ****************************//
-	// ********* DELETE ***********//
-	// ****************************//
+	// **************************** //
+	// ********* DELETE *********** //
+	// **************************** //
 
 	else if(strcmp(command, "delete") == 0) {
 		remove_from_database_1_arg = malloc(sizeof(char) * 64);
@@ -104,9 +104,9 @@ phone_book_prog_1(char *host, char *command)
 		printf("\n");
 	}
 
-	// ****************************//
-	// *********** LIST ***********//
-	// ****************************//
+	// **************************** //
+	// *********** QUERY ********** //
+	// **************************** //
 
 	else if(strcmp(command, "query") == 0) {
 		puts("Enter a name to search for :");
@@ -131,11 +131,25 @@ phone_book_prog_1(char *host, char *command)
 			}
 		}
 	}
+
+	// **************************** //
+	// *********** LIST *********** //
+	// **************************** //
 	
-	// result_4 = list_1((void*)&list_1_arg, clnt);
-	// if (result_4 == (r_val *) NULL) {
-	// 	clnt_perror (clnt, "call failed");
-	// }
+	result_4 = list_1((void*)&list_1_arg, clnt);
+	if (result_4 == (r_val *) NULL) {
+		clnt_perror (clnt, "call failed");
+	}
+	else if(result_4->num < 0) {
+		printf("%s\n", result_4->message);
+	}
+	else {
+		entry *current = result_4->head;
+		while(current) {
+			printf("%s, %s\n", current->name, current->number);
+			current = current->next;
+		}
+	}
 	// result_5 = quit_1((void*)&quit_1_arg, clnt);
 	// if (result_5 == (int *) NULL) {
 	// 	clnt_perror (clnt, "call failed");
